@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/k-jun/grpc";
+
+// https://developers.google.com/protocol-buffers/docs/proto3
+// package northpole;
+
+service PlaygroundGrpc {
+  rpc CreateTodo(TodoData) returns (TodoData) {}
+  rpc ReadTodo(TodoData) returns (TodoData) {}
+  rpc UpdateTodo(TodoData) returns (TodoData) {}
+  rpc DeleteTodo(TodoData) returns (TodoData) {}
+}
+
+message TodoData {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+}
