@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -18,5 +19,6 @@ func main() {
 		log.Fatal(err)
 	}
 	grpcServer := server.NewServer()
-	grpcServer.Serve(listener)
+	ctx := context.Background()
+	grpcServer.Serve(ctx, listener)
 }

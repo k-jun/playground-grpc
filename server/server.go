@@ -3,12 +3,12 @@ package server
 import (
 	"context"
 	"errors"
-	pb "playground-grpc/grpc"
+	pb "playground-grpc/drpc"
 	"time"
 
 	"github.com/patrickmn/go-cache"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"storj.io/drpc/drpcmux"
+	"storj.io/drpc/drpcserver"
 )
 
 var (
@@ -19,14 +19,17 @@ type playgroundGrpc struct {
 	Cache *cache.Cache
 }
 
-func NewServer() *grpc.Server {
-	grpcServer := grpc.NewServer()
+func NewServer() *drpcserver.Server {
+	m := drpcmux.New()
 	svc := playgroundGrpc{
 		Cache: cache.New(5*time.Minute, 10*time.Minute),
 	}
-	pb.RegisterPlaygroundGrpcServer(grpcServer, &svc)
-	reflection.Register(grpcServer)
-	return grpcServer
+	err := pb.DRPCRegisterPlaygroundDrpc(m, &svc)
+	if err != nil {
+		panic(err)
+		return nil
+	}
+	return drpcserver.New(m)
 }
 
 func (p *playgroundGrpc) CreateTodo(c context.Context, todo *pb.TodoData) (*pb.TodoData, error) {
